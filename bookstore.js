@@ -1,57 +1,59 @@
-// Step 2:
-// use bookstore
+// Step 2: use bookstore
 db = db.getSiblingDB("bookstore")
 
-// Step 3: load authors.json
+// Step 3: add authors from  json file
 db.authors.drop()
-doc = JSON.parse(fs.readFileSync("authors.json", "utf8"))
-db.authors.insertMany(doc)
+let authors = JSON.parse(fs.readFileSync("authors.json", "utf8"))
+db.authors.insertMany(authors)
 
-// Step 4: load books.json
+// Step 4: add books from json file
 db.books.drop()
-doc = JSON.parse(fs.readFileSync("books.json", "utf8"))
-db.books.insertMany(doc)
+let books = JSON.parse(fs.readFileSync("books.json", "utf8"))
+db.books.insertMany(books)
 
-// Step 5: list authors and books
-// (printjson + toArray so results print when run as a file)
+// Step 5: show all authors and books
 printjson(db.authors.find().toArray())
 printjson(db.books.find().toArray())
 
-// Step 6: insert two new books
+// Step 6: add two books
 db.books.insertMany([
   {
-    title: "The Hitchhiker's Guide to the Galaxy",
-    published_year: 1979,
+    title: "Harry Potter and the Sorcerer's Stone",
+    published_year: 1997,
     author_ids: ["author_004"]
   },
   {
-    title: "Pride and Prejudice and Zombies",
-    published_year: 2009,
-    author_ids: ["author_001", "author_005"]
+    title: "The Shining",
+    published_year: 1977,
+    author_ids: ["author_005"]
   }
 ])
 
-// Step 7: add missing authors
+// Step 7: add authors
 db.authors.insertMany([
   {
     _id: "author_004",
-    name: "Douglas Adams",
+    name: "J.K. Rowling",
     nationality: "British",
     bio: {
-      short: "English author best known for The Hitchhiker's Guide to the Galaxy.",
-      long: "Douglas Adams (1952-2001) was an English author, humorist, and screenwriter. The Hitchhiker's Guide to the Galaxy began as a BBC radio comedy in 1978 and grew into a series of novels, a TV series, and a film. He also wrote the Dirk Gently novels and was a noted advocate for conservation."
+      short: "Author of the Harry Potter books.",
+      long: "J.K. Rowling is a British author who wrote the Harry Potter series."
     }
   },
   {
     _id: "author_005",
-    name: "Seth Grahame-Smith",
+    name: "Stephen King",
     nationality: "American",
     bio: {
-      short: "American author of literary mashups such as Pride and Prejudice and Zombies.",
-      long: "Seth Grahame-Smith is an American novelist, screenwriter, and producer. He popularized the literary mashup genre with Pride and Prejudice and Zombies (2009), built on Jane Austen's original text, and followed it with Abraham Lincoln: Vampire Hunter."
+      short: "Author known for horror books.",
+      long: "Stephen King is an American author famous for horror stories."
     }
   }
 ])
 
-// Step 8: filter books by a list of authors
-printjson(db.books.find({ author_ids: { $in: ["author_001", "author_004"] } }).toArray())
+// Step 8: find books by authors
+printjson(
+  db.books.find({
+    author_ids: { $in: ["author_001", "author_004"] }
+  }).toArray()
+)
